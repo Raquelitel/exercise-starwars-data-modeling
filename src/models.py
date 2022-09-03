@@ -8,26 +8,100 @@ from eralchemy import render_er
 
 Base = declarative_base()
 
-class Person(Base):
-    __tablename__ = 'person'
-    # Here we define columns for the table person
-    # Notice that each column is also a normal Python instance attribute.
+class User(Base):
+    __tablename__= "user"
     id = Column(Integer, primary_key=True)
-    name = Column(String(250), nullable=False)
+    name = Column(String(30), nullable=False)
+    email = Column(String(60), nullable=False)
+    password = Column(String(20), nullable= False)
+    favorites = relationship('Favorites', backref='User', lazy=True)
+   # is_active = Column(Boolean(), nullable=False) 
 
-class Address(Base):
-    __tablename__ = 'address'
-    # Here we define columns for the table address.
-    # Notice that each column is also a normal Python instance attribute.
+    def __repr__(self):
+        return '<User %r>' % self.id
+
+    def serialize(self):
+        return {
+            "id": self.id,
+            "name": self.name,
+            "email": self.email,
+            
+            # do not serialize the password, its a security breach
+        }
+
+class Favorites(Base):
+    __tablename__ = "favorites"
+    id= Column(Integer, primary_key=True)
+    user_id = Column(Integer, ForeignKey("user.id"))
+    user_name = Column(String(30), ForeignKey("user.name"))
+    people_id = Column(Integer, ForeignKey("people.id"))
+    people_name = Column(Integer, ForeignKey("people.name"))
+    planet_id = Column(Integer, ForeignKey("planet.id"))
+    planet_name = Column(Integer, ForeignKey("planet.name"))
+
+    def __repr__(self):
+        return f"<Favorites id={self.id}>"
+    
+    def serialize(self):
+        return {
+            "id": self.id,
+            "user_id": self.user_id,
+            "user_name": self.user_name,
+            "people_id": self.people_id,
+            "people_name": self.people_name,
+            "planet_id": self.planet_id,
+            "planet_name": self.planet_name
+        }
+
+class People(Base):
+    __tablename__ = 'people'
     id = Column(Integer, primary_key=True)
-    street_name = Column(String(250))
-    street_number = Column(String(250))
-    post_code = Column(String(250), nullable=False)
-    person_id = Column(Integer, ForeignKey('person.id'))
-    person = relationship(Person)
+    name = Column(String(60), nullable=False)
+    gender = Column(String(10))
+    birthday_year = Column(String(10))
+    color_eyes = Column(String(10))
+    height = Column(String(5))
+    mass = Column(String(5))
 
-    def to_dict(self):
-        return {}
+    def __repr__(self):
+        return f"<People id={self.id} name= {self.name}>"
+
+    def serialize(self):
+        return {
+            "id": self.id,
+            "name": self.name,
+            "gender": self.gender,
+            "birthday_year": self.birthday_year,
+            "color_eyes": self.color_eyes,
+            "height": self.height,
+            "mass": self.mass
+
+        }
+
+
+class Planet(Base):
+    __tablename__ = "planet"
+    id = Column(Integer, primary_key=True)
+    name = Column(String(60), nullable=False)
+    gravity = Column(String(10))
+    terrain = Column(String(10))
+    diametrer = Column(String(10))
+    rotation_period = Column(String(10))
+    orbital_period = Column(String(10))
+
+    def __repr__(self):
+        return f"<Planet id={self.id} name= {self.name}"
+
+
+    
+
+
+
+
+
+
+
+
 
 ## Draw from SQLAlchemy base
 render_er(Base, 'diagram.png')
