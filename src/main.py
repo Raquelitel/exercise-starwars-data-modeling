@@ -31,13 +31,18 @@ def sitemap():
 @app.route('/user', methods=['GET'])
 def get_user():
     queryset= User.query.all()
-    users_list = [user.serialize() for user in queryset]
+    user_list = [user.serialize() for user in queryset]
     response_body = {
 
         "success": True,
         "results": user_list,
         "msg": "hola"
     }
+    return jsonify(response_body), 200
+
+@app.route('/people', methods=['GET'])
+def get_people():
+    response_body = {"msg":"Hola people"}
     return jsonify(response_body), 200
 
 @app.route('/people', methods=['GET'])
@@ -50,3 +55,20 @@ def get_people():
         "results": people_list
     }
     return jsonify(response_body), 200
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+if __name__ == '__main__':
+    PORT = int(os.environ.get('PORT', 3000))
+    app.run(host='0.0.0.0', port=PORT, debug=False)
