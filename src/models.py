@@ -33,11 +33,9 @@ class Favorites(Base):
     __tablename__ = "favorites"
     id= Column(Integer, primary_key=True)
     user_id = Column(Integer, ForeignKey("user.id"))
-    user_name = Column(String(30), ForeignKey("user.name"))
     people_id = Column(Integer, ForeignKey("people.id"))
-    people_name = Column(Integer, ForeignKey("people.name"))
     planet_id = Column(Integer, ForeignKey("planet.id"))
-    planet_name = Column(Integer, ForeignKey("planet.name"))
+
 
     def __repr__(self):
         return f"<Favorites id={self.id}>"
@@ -62,6 +60,8 @@ class People(Base):
     color_eyes = Column(String(10))
     height = Column(String(5))
     mass = Column(String(5))
+    favorites = relationship('Favorites', backref='People', lazy=True)
+
 
     def __repr__(self):
         return f"<People id={self.id} name= {self.name}>"
@@ -88,6 +88,7 @@ class Planet(Base):
     diametrer = Column(String(10))
     rotation_period = Column(String(10))
     orbital_period = Column(String(10))
+    favorites = relationship('Favorites', backref='Planet', lazy=True)
 
     def __repr__(self):
         return f"<Planet id={self.id} name= {self.name}"
